@@ -1,18 +1,20 @@
+import logging
+
 from oauthlib.oauth2 import LegacyApplicationClient
 from requests_oauthlib import OAuth2Session
+
 from . import geosys_platform_urls
-import logging
 
 
 class Oauth2Api:
     def __init__(
-            self,
-            client_id: str,
-            client_secret: str,
-            username: str,
-            password: str,
-            enum_env: str,
-            enum_region: str,
+        self,
+        client_id: str,
+        client_secret: str,
+        username: str,
+        password: str,
+        enum_env: str,
+        enum_region: str,
     ):
         """Initializes a Geosys instance with the required credentials
         to connect to the GEOSYS API.

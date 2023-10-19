@@ -1,6 +1,7 @@
-from . import oauth2_client
 from oauthlib.oauth2 import TokenExpiredError
 from requests_oauthlib import OAuth2Session
+
+from . import oauth2_client
 
 
 def renew_access_token(func):
@@ -23,15 +24,14 @@ def renew_access_token(func):
 
 
 class HttpClient:
-
     def __init__(
-            self,
-            client_id: str,
-            client_secret: str,
-            username: str,
-            password: str,
-            enum_env: str,
-            enum_region: str,
+        self,
+        client_id: str,
+        client_secret: str,
+        username: str,
+        password: str,
+        enum_env: str,
+        enum_region: str,
     ):
         self.__client_oauth = oauth2_client.Oauth2Api(
             client_id=client_id,
@@ -43,7 +43,9 @@ class HttpClient:
         )
         self.access_token = self.__client_oauth.token
 
-        self.__client = OAuth2Session(self.__client_oauth.client_id, token=self.__client_oauth.token)
+        self.__client = OAuth2Session(
+            self.__client_oauth.client_id, token=self.__client_oauth.token
+        )
 
     @renew_access_token
     def get(self, url_endpoint: str, headers={}):
