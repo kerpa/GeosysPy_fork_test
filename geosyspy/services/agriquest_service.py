@@ -1,14 +1,15 @@
 import json
 import logging
-import pandas as pd
 from datetime import datetime, timedelta
 from urllib.parse import urljoin
+
+import pandas as pd
+
 from geosyspy.utils.constants import *
 from geosyspy.utils.http_client import *
 
 
 class AgriquestService:
-
     def __init__(self, base_url: str, http_client: HttpClient):
         self.base_url: str = base_url
         self.http_client: HttpClient = http_client
@@ -16,19 +17,19 @@ class AgriquestService:
     def weather_indicators_builder(self, start_date, end_date, isFrance):
         """build weather indicators list from 2 dates
 
-            Args:
-                start_date (datetime) : the start date used for the request
-                end_date (datetime) : the end date used for the request
-                isFrance (boolean) : resuqest mad for France or not
+        Args:
+            start_date (datetime) : the start date used for the request
+            end_date (datetime) : the end date used for the request
+            isFrance (boolean) : resuqest mad for France or not
 
-            Returns:
-                A list of int (weather indicators)
-                - 2 : ENS observed data
-                - 3 : Arome Weather Observed data (Meteo France, France only)
-                - 4 : ECMWF Weather  Forecast Data
-                - 5 : GFS Weather Forecast Data
+        Returns:
+            A list of int (weather indicators)
+            - 2 : ENS observed data
+            - 3 : Arome Weather Observed data (Meteo France, France only)
+            - 4 : ECMWF Weather  Forecast Data
+            - 5 : GFS Weather Forecast Data
 
-            """
+        """
 
         today = datetime.now().date()
         result = []
@@ -54,29 +55,30 @@ class AgriquestService:
             Returns:
                 boolean
         """
-        if (block_code.value in [item.value for item in AgriquestFranceBlockCode]):
+        if block_code.value in [item.value for item in AgriquestFranceBlockCode]:
             return True
         return False
 
-    def get_agriquest_block_weather_data(self,
-                                         start_date: str,
-                                         end_date: str,
-                                         block_code: AgriquestBlocks,
-                                         indicator_list: [int],
-                                         weather_type: AgriquestWeatherType
-                                         ):
+    def get_agriquest_block_weather_data(
+        self,
+        start_date: str,
+        end_date: str,
+        block_code: AgriquestBlocks,
+        indicator_list: [int],
+        weather_type: AgriquestWeatherType,
+    ):
         """
-            method to call Weather AgriQuest Api and build a panda DataFrame
+        method to call Weather AgriQuest Api and build a panda DataFrame
 
-                Args:
-                     start_date (str),
-                     end_date (str),
-                     block_code (AgriquestBlocks): the AQ block to check ,
-                     indicator_list ([int]): list of weather indicator types,
-                     weather_type(AgriquestWeatherType): type of weather data to retrieve
-                Returns:
-                    Panda DataFrame representing the value corresponding to the weather_type of each AMU of the block,
-                    on the specified period provided in parameter.
+            Args:
+                 start_date (str),
+                 end_date (str),
+                 block_code (AgriquestBlocks): the AQ block to check ,
+                 indicator_list ([int]): list of weather indicator types,
+                 weather_type(AgriquestWeatherType): type of weather data to retrieve
+            Returns:
+                Panda DataFrame representing the value corresponding to the weather_type of each AMU of the block,
+                on the specified period provided in parameter.
         """
 
         payload = {
@@ -86,10 +88,12 @@ class AgriquestService:
             "endDate": end_date,
             "idPixelType": 1,
             "idBlock": block_code.value,
-            "indicatorTypeIds": indicator_list
+            "indicatorTypeIds": indicator_list,
         }
         parameters: str = f"/{weather_type.value}/export-map/year-of-interest"
-        aq_url: str = urljoin(self.base_url, GeosysApiEndpoints.AGRIQUEST_ENDPOINT.value + parameters)
+        aq_url: str = urljoin(
+            self.base_url, GeosysApiEndpoints.AGRIQUEST_ENDPOINT.value + parameters
+        )
         response = self.http_client.post(aq_url, payload)
         if response.status_code == 200:
             dict_response = response.json()
@@ -109,23 +113,23 @@ class AgriquestService:
         else:
             logging.info(response.status_code)
 
-
-    def get_agriquest_block_ndvi_data(self,
-                                      date: str,
-                                      block_code: AgriquestBlocks,
-                                      commodity: AgriquestCommodityCode,
-                                      indicator_list: [int]
-                                      ):
+    def get_agriquest_block_ndvi_data(
+        self,
+        date: str,
+        block_code: AgriquestBlocks,
+        commodity: AgriquestCommodityCode,
+        indicator_list: [int],
+    ):
         """
-            method to call year-of-interest AgriQuest Api and build a panda DataFrame
+        method to call year-of-interest AgriQuest Api and build a panda DataFrame
 
-                Args:
-                     date (str),
-                     block_code (AgriquestBlocks): the AQ block to check ,
-                     indicator_list ([int]): list of indicator types
-                Returns:
-                    Panda DataFrame representing the value corresponding to NDVI index of each AMU of the block,
-                    on the specified date (dayOfMeasure) provided in parameter.
+            Args:
+                 date (str),
+                 block_code (AgriquestBlocks): the AQ block to check ,
+                 indicator_list ([int]): list of indicator types
+            Returns:
+                Panda DataFrame representing the value corresponding to NDVI index of each AMU of the block,
+                on the specified date (dayOfMeasure) provided in parameter.
         """
 
         payload = {
@@ -134,10 +138,12 @@ class AgriquestService:
             "dayOfMeasure": date,
             "idPixelType": 1,
             "idBlock": block_code.value,
-            "indicatorTypeIds": indicator_list
+            "indicatorTypeIds": indicator_list,
         }
         parameters: str = f"/vegetation-vigor-index/export-map/year-of-interest"
-        aq_url: str = urljoin(self.base_url, GeosysApiEndpoints.AGRIQUEST_ENDPOINT.value + parameters)
+        aq_url: str = urljoin(
+            self.base_url, GeosysApiEndpoints.AGRIQUEST_ENDPOINT.value + parameters
+        )
         response = self.http_client.post(aq_url, payload)
         if response.status_code == 200:
             dict_response = response.json()
