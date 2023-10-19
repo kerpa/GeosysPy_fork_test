@@ -1,6 +1,4 @@
-
 class ImageReference:
-
     def __init__(self, image_id, image_date, image_sensor, season_field_id):
         self.image_id = image_id
         self.image_date = image_date

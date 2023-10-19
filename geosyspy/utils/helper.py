@@ -1,14 +1,13 @@
-import re
 import json
+import re
+
 from shapely import wkt
 from shapely.geometry import shape
 
 
 class Helper:
-
     @staticmethod
-    def get_matched_str_from_pattern(pattern: str,
-                                     text: str) -> str:
+    def get_matched_str_from_pattern(pattern: str, text: str) -> str:
         """Returns the first occurence of the matched pattern in text.
 
         Args:
@@ -24,7 +23,7 @@ class Helper:
 
     @staticmethod
     def convert_to_wkt(geometry):
-        """ convert a geometry (WKT or geoJson) to WKT
+        """convert a geometry (WKT or geoJson) to WKT
         Args:
             geometry : A string representing the geometry (WKT or geoJson)
 
@@ -53,7 +52,7 @@ class Helper:
 
     @staticmethod
     def is_valid_wkt(geometry):
-        """ check if the geometry is a valid WKT
+        """check if the geometry is a valid WKT
         Args:
             geometry : A string representing the geometry
 

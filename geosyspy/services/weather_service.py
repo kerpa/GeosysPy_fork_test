@@ -1,8 +1,8 @@
 import logging
-import pandas as pd
 from datetime import datetime
 from urllib.parse import urljoin
 
+import pandas as pd
 from shapely import wkt
 
 from geosyspy.utils.constants import *
@@ -10,16 +10,18 @@ from geosyspy.utils.http_client import *
 
 
 class WeatherService:
-
     def __init__(self, base_url: str, http_client: HttpClient):
         self.base_url: str = base_url
         self.http_client: HttpClient = http_client
 
-    def get_weather(self, polygon: str,
-                      start_date: datetime,
-                      end_date: datetime,
-                      weather_type: WeatherTypeCollection,
-                      fields: [str]):
+    def get_weather(
+        self,
+        polygon: str,
+        start_date: datetime,
+        end_date: datetime,
+        weather_type: WeatherTypeCollection,
+        fields: [str],
+    ):
         """Returns the weather data as a pandas dataframe.
 
         Args:
@@ -35,7 +37,9 @@ class WeatherService:
         """
 
         if weather_type not in WeatherTypeCollection:
-            raise ValueError(f"weather_type should be either {[item.value for item in WeatherTypeCollection]}")
+            raise ValueError(
+                f"weather_type should be either {[item.value for item in WeatherTypeCollection]}"
+            )
         weather_type = weather_type.value
         if "Date" not in fields:
             fields.append("Date")
@@ -45,7 +49,9 @@ class WeatherService:
         polygon_wkt = wkt.loads(polygon)
         weather_fields: str = ",".join(fields)
         parameters: str = f"?%24offset=0&%24limit=None&%24count=false&Location={polygon_wkt.centroid.wkt}&Date=%24between%3A{start_date}T00%3A00%3A00.0000000Z%7C{end_date}T00%3A00%3A00.0000000Z&Provider=GLOBAL1&WeatherType={weather_type}&$fields={weather_fields}"
-        weather_url: str = urljoin(self.base_url, GeosysApiEndpoints.WEATHER_ENDPOINT.value + parameters)
+        weather_url: str = urljoin(
+            self.base_url, GeosysApiEndpoints.WEATHER_ENDPOINT.value + parameters
+        )
 
         response = self.http_client.get(weather_url)
 
